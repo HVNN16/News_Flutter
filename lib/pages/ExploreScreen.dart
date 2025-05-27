@@ -50,14 +50,14 @@ class ExploreScreen extends StatelessWidget {
             developer.log("Người dùng không phải admin: ${roleSnapshot.data}");
             return Column(
               children: [
-                const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    "Bạn không có quyền admin để thêm kênh báo hoặc bài báo.",
-                    style: TextStyle(color: Colors.red),
-                  ),
-                ),
-                Expanded(child: _buildSourcesList()),
+                // const Padding(
+                //   padding: EdgeInsets.all(8.0),
+                //   child: Text(
+                //     "Bạn không có quyền admin để thêm kênh báo hoặc bài báo.",
+                //     style: TextStyle(color: Colors.red),
+                //   ),
+                // ),
+                Expanded(child: _buildSourcesList(roleSnapshot.data)),
               ],
             );
           }
@@ -80,7 +80,7 @@ class ExploreScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              Expanded(child: _buildSourcesList()),
+              Expanded(child: _buildSourcesList(roleSnapshot.data)),
             ],
           );
         },
@@ -88,7 +88,7 @@ class ExploreScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSourcesList() {
+  Widget _buildSourcesList(String? userRole) {
     developer.log("Bắt đầu đọc dữ liệu từ collection 'source'");
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance.collection('source').snapshots(),
@@ -124,18 +124,16 @@ class ExploreScreen extends StatelessWidget {
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   color: Theme.of(context).brightness == Brightness.dark
-                      ? Colors.greenAccent // Màu tiêu đề khi giao diện tối
-                      : Colors.green,      // Màu tiêu đề khi giao diện sáng
+                      ? Colors.greenAccent
+                      : Colors.green,
                 ),
               ),
-
               subtitle: Text(
                 source['description'] ?? '',
                 style: const TextStyle(
-                  color: Color(0xFF4A4A4A), // Màu xám đậm, dễ đọc trên cả nền sáng và tối
+                  color: Color(0xFF4A4A4A),
                 ),
               ),
-
               trailing: const Icon(
                 Icons.star_border,
                 color: Colors.grey,
@@ -146,6 +144,7 @@ class ExploreScreen extends StatelessWidget {
                   MaterialPageRoute(
                     builder: (context) => SourceNewsScreen(
                       sourceName: source['name'],
+                      userRole: userRole, // ✅ truyền role
                     ),
                   ),
                 );
